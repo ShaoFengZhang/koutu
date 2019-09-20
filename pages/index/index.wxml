@@ -1,0 +1,75 @@
+<view class="bg" wx:if="{{apiHaveLoad}}">
+
+    <!-- 顶部上传 -->
+    <view class="topUploadView" catchtap="shangchuan">
+        <image src="/assets/app/homeUpload.png" />
+        <form bindsubmit="formSubmit" report-submit="{{true}}">
+            <button formType="submit" class='Sbtn'>
+            </button>
+        </form>
+    </view>
+
+    <!-- 四个分类标签 -->
+    <view class="classView">
+        <view class="classItem" data-id="{{item.typeid}}" wx:for="{{topclassArr}}" wx:key="{{index}}" catchtap="checkClass">
+            <view>
+                <image src="{{item.img}}" />
+            </view>
+            <view>{{item.title}}</view>
+            <form bindsubmit="formSubmit" report-submit="{{true}}">
+                <button formType="submit" class='Sbtn'>
+                </button>
+            </form>
+        </view>
+
+        <view class="classItem" catchtap="gotoClassify">
+            <view>
+                <image src="/assets/app/allclass.png" />
+            </view>
+            <form bindsubmit="formSubmit" report-submit="{{true}}">
+                <button formType="submit" class='Sbtn'>
+                </button>
+            </form>
+            <view>全部分类</view>
+        </view>
+    </view>
+
+    <!-- 模板列表 -->
+    <view class="mubanListView" wx:for-index="bindex" wx:if="{{item.content.length}}" wx:for="{{contentArr}}" wx:key="{{index}}">
+
+        <view class="mubanClassTitle" data-id="{{item.id}}" catchtap="checkClass">
+            <text style="color:#222;font-size:40rpx;font-weight:bold;">{{item.txt}}</text>
+            <text style="color:#666;font-size:28rpx;">查看更多 ></text>
+            <form bindsubmit="formSubmit" report-submit="{{true}}">
+                <button formType="submit" class='Sbtn'>
+                </button>
+            </form>
+        </view>
+
+        <view class="mubanIconListView">
+            <view style="position: relative;" data-bindex='{{bindex}}' data-index="{{index}}" class="mubanItem" wx:for="{{item.content}}" wx:key="{{index}}" catchtap="gotomaking">
+                <image src="{{srcDomin}}/newadmin/Uploads/{{item.xiaotu_url}}" />
+                <form bindsubmit="formSubmit" report-submit="{{true}}">
+                    <button formType="submit" class='Sbtn'>
+                    </button>
+                </form>
+            </view>
+        </view>
+
+        <!-- 暂时没有数据 -->
+        <view class='nocom' wx:if="{{!item.content.length}}">
+            <image src='/assets/app/nodata.png' />
+            <view>暂时还没有数据亲~</view>
+        </view>
+
+    </view>
+
+    <!-- 加载中 -->
+    <!-- <view class='loading' wx:if="{{ifloadtxt}}">
+        加载中 . . .
+    </view> -->
+
+    <!-- <button catchtap='catchtap' id='getInfoBtn' wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="getUserInfo">
+    </button> -->
+
+</view>

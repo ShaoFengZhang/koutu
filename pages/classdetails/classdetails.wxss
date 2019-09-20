@@ -1,0 +1,25 @@
+.bg {
+    min-height: 100vh;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    padding: 26rpx;
+}
+
+.mubanItem {
+    background: rgba(216, 216, 216, 1);
+    margin-bottom: 20rpx;
+    box-shadow:0px 4rpx 8rpx 0px rgba(0,0,0,0.08);
+}
+
+.mubanItem image,.mubanItem{
+    width: 338rpx;
+    height: 528rpx;
+    border-radius: 8rpx;
+}
+
+.nocom{
+    margin-left: 232rpx;
+}

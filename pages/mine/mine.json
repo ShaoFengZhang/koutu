@@ -1,0 +1,7 @@
+{
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "我的",
+    "backgroundColor": "#000000",
+    "disableSwipeBack": true,
+    "onReachBottomDistance": 0
+}

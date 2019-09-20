@@ -1,0 +1,9 @@
+{
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "点点抠图",
+    "backgroundColor": "#000000",
+    "disableSwipeBack":true,
+    "enablePullDownRefresh":true,
+    "onReachBottomDistance":0,
+    "component": true
+}
