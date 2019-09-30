@@ -1,105 +1,35 @@
 .bg {
-    background-color: #fff;
-    color: #282828;
+    background-color: #6e1fd3;
+    color: #fff;
+    min-height: 100vh;
+    background-image: url('https://duanju.58100.com/upload/new/5.png');
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
-image {
-    vertical-align: middle;
-}
-
-/* 顶部上传图片 */
-
-.topUploadView {
-    margin: 8rpx auto 0;
-    position: relative;
-}
-
-.topUploadView image,.topUploadView {
-    width: 722rpx;
-    height: 302rpx;
-}
-
-/* 分类部分 */
-
-.classView {
-    width: 710rpx;
-    /* height: 148rpx; */
-    margin: 10rpx auto 0;
-    display: flex;
-    justify-content: space-between;
-}
-
-.classItem {
-    width: 112rpx;
-    /* height: 148rpx; */
+.topdestxt {
+    width: 100%;
     text-align: center;
-    font-size: 28rpx;
-    color:#666;
-    position: relative;
-    font-weight: bold;
+    font-size: 48rpx;
+    margin-top: 102rpx;
+    font-family: PingFangSC;
 }
 
-.classItem image {
-    width: 112rpx;
-    height: 112rpx;
-    margin-bottom: 12rpx;
-    /* border-radius: 50%; */
+.gifView, .gifView image {
+    width: 520rpx;
+    height: 738rpx;
 }
 
-/* 模板列表 */
-
-.mubanListView {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0 20rpx;
-    margin: 34rpx 0 0;
+.gifView {
+    background-color: gray;
+    margin: 56rpx auto 0;
 }
 
-.mubanClassTitle {
-    width: 100%;
-    height: 56rpx;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-}
-
-.mubanIconListView {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    margin-top: 22rpx;
-}
-
-.mubanItem {
-    margin-bottom: 20rpx;
-    margin-right: 22rpx;
-    box-shadow:0px 4rpx 8rpx 0px rgba(0,0,0,0.08);
-}
-
-.mubanItem:nth-of-type(3n+0) {
-    margin-right: 0rpx;
-}
-
-.mubanItem, .mubanItem image {
-    width: 220rpx;
-    height: 350rpx;
-    border-radius: 8rpx;
-}
-
-/* 收藏小程序image */
-
-.shouCangView, .shouCangView image {
-    width: 100%;
-    height: 70rpx;
-}
-
-navigator {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
+.uploadbtn, .uploadbtn image {
+    width: 520rpx;
     height: 160rpx;
-    opacity: 0, ;
+}
+
+.uploadbtn{
+    margin: 62rpx auto 0;
 }

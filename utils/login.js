@@ -161,7 +161,7 @@ const requestUrl = (app, url, method, data, cb) => {
                 content: '请求失败,请稍后再试',
                 showCancel: false,
                 success: function(res) {
-                    wx.switchTab({
+                    wx.reLaunch({
                         url: '/pages/index/index'
                     })
                 }
@@ -181,7 +181,7 @@ const requestUrl = (app, url, method, data, cb) => {
                         content: '网络异常,请稍后再试',
                         showCancel: false,
                         success: function(res) {
-                            wx.switchTab({
+                            wx.reLaunch({
                                 url: '/pages/index/index'
                             })
                         }
@@ -195,7 +195,7 @@ const requestUrl = (app, url, method, data, cb) => {
                     content: '服务器抛锚了,请稍后再试',
                     showCancel: false,
                     success: function(res) {
-                        wx.switchTab({
+                        wx.reLaunch({
                             url: '/pages/index/index'
                         })
                     }

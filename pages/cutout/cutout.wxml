@@ -1,20 +1,39 @@
-<view class="bg">
+<view class="bg" wx:if="{{1}}">
+
+    <top-bar id="topBarView" style="z-index:9999;" comtype="{{3}}"></top-bar>
+
+    <view id="caozuo">
+        <image src="{{dituimg}}"  bindload="imagebindload"/>
+    </view>
+
+    <view class='contentWarp' style="left:{{posLeft}}px;top:{{posTop}}px">
+        <movable-area class="canMoveArea" >
+            <movable-view animation="{{false}}" style='width:{{picinfo.width}}px;height:{{picinfo.height}}px;'  direction="all" scale scale-min="0.5" scale-max="4" scale-value="{{scale}}" x="{{dx}}" y="{{dy}}" bindchange="onChange" bindscale="onScale">
+                <image class="peopleImg" src="{{peopleUrl}}" style='width:{{picinfo.width}}px;height:{{picinfo.height}}px;'/>
+            </movable-view>
+        </movable-area>
+    </view>
 
 
-    <view class='contentWarp' id="caozuo" style="background-image: url({{dituimg}}) ">
-        <!-- *************操作区域*************  -->
-        <block wx:for="{{itemList}}" wx:key="{{item.id}}">
-        <!-- 圆心坐标  -->
-            <text style='position:absolute;top:{{item.y}}px;left:{{item.x}}px;width:2px;height:2px;background-color:yellow;z-index:500'></text>
-            <view class='touchWrap' style='transform: scale({{item.scale}});top:{{item.top}}px;left:{{item.left}}px;'>
-                <view class='imgWrap {{item.active? "touchActive":""}}' style="transform: rotate({{item.angle}}deg); border: {{item.active?4*item.oScale:0}}rpx #fff dashed;">
-                    <image src='{{item.image}}' data-id='{{item.id}}' style='width:{{item.width}}px;height:{{item.height}}px;' bindtouchstart='WraptouchStart' bindtouchmove='WraptouchMove' bindtouchend='WraptouchEnd' bindload="imagebindload"></image>
-                    <!-- <image class='x' src='/assets/app/xuanzhuan.png' style='transform: scale({{item.oScale}});transform-origin:center;' data-id='{{item.id}}' bindtap='deleteItem'></image> -->
-                    <image class='o'  src='/assets/app/xuanzhuan.png' style='transform: scale({{item.scale>=0.5?1:(item.scale>=0.3?item.scale+3:item.scale+4)}});transform-origin:center;' data-id='{{item.id}}' bindtouchstart='oTouchStart' bindtouchmove='oTouchMove'></image>
+    <view class="classBotView">
+
+        <view class="txtClass">
+            <scroll-view scroll-x style="height: 56rpx;">
+                <view class="scroll-view">
+                    <view class="classTxtItem {{txtNowIndex==index?'selectTxt':null}}" wx:for="{{classArr}}" wx:key="{{index}}" data-index="{{index}}" catchtap="txtClassClicl">{{item.txt}}</view>
                 </view>
-            </view>
-        </block>
-        <!-- **************操作区域************  -->
+            </scroll-view>
+        </view>
+
+        <view class="classPicList">
+            <scroll-view scroll-left="{{scrollLeft}}" scroll-x style="height: 122rpx;" bindscrolltolower="bindscrolltolower">
+                <view class="scroll-view">
+                    <view class="classPicItem {{index==picNowSelcet?'slectPic':null}}" wx:for="{{contentArr}}" wx:key="{{index}}" data-index="{{index}}" catchtap="classPicClick">
+                        <image mode="scaleToFill" src="{{srcDomin}}/newadmin/Uploads/{{item.xiaotu_url}}" />
+                    </view>
+                </view>
+            </scroll-view>
+        </view>
     </view>
 
     <view class="makeBtn">

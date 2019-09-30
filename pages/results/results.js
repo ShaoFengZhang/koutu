@@ -5,72 +5,30 @@ const app = getApp();
 Page({
 
     data: {
-        ifshowMask:0,
+        
     },
 
     onLoad: function(options) {
         let _this=this;
-        wx.getSystemInfo({
-            success(res) {
-                console.log(res);
-                if (res.system.slice(0, 3) == 'iOS') {
-                    _this.setData({
-                        huiyuanhide: 1,
-                    })
-                }
-            }
-        });
-
-        console.log(options);
-        this.setData({
-            // scrollHeight: (app.windowHeight + app.Bheight) * 750 / app.sysWidth - 804,
-            // margintop: ((app.windowHeight) * 750 / app.sysWidth - 1126)/2,
-            // margintop: ((app.windowHeight + app.Bheight) * 750 / app.sysWidth - 1126)/2,
-            viewHeight: ((app.windowHeight + app.Bheight) * 750 / app.sysWidth - 144),
-        });
-        if (options && options.picUrl) {
-            this.picUrl = options.picUrl;
-            this.mubanId = options.mubanId;
-            this.shareImg = options.imgurl;
-            this.imgtype = options.type;
-            this.generatePoster();
+        if (options && options.url) {
+            this.setData({
+                posturl: options.url
+                // posturl: 'https://duanju.58100.com/upload/tutie/budaierweima/1569299875669.jpg'
+            })
         };
-
-
-        this.videoAd = null
-        if (wx.createRewardedVideoAd) {
-            this.videoAd = wx.createRewardedVideoAd({
-                adUnitId: 'adunit-2e26b10a522cfcef'
-            })
-            this.videoAd.onLoad(() => { })
-            this.videoAd.onError((err) => {
-                _this.setData({
-                    videoAdShow: 0,
-                })
-            });
-            this.videoAd.onClose(res => {
-                // 用户点击了【关闭广告】按钮
-                if (res && res.isEnded) {
-                    //完整观看
-                    _this.addScore()
-                } else {
-                    util.toast('需要完整观看视频哦~')
-                }
-            })
-        }
 
     },
 
     onShow: function() {
-        this.getuserScore();
+
     },
 
 
     onShareAppMessage: function() {
         return {
             title: '@你，大家一起来制图~',
-            path: `/pages/index/index?mubanId=${this.mubanId}&imgurl=${this.shareImg}&uid=${wx.getStorageSync('u_id')}&type=${this.imgtype}`,
-            imageUrl: this.data.posterUrl
+            path: `/pages/index/index?uid=${wx.getStorageSync('u_id')}&type=${this.imgtype}`,
+            imageUrl: this.data.posturl
         }
     },
 
@@ -78,134 +36,10 @@ Page({
         util.formSubmit(app, e);
     },
 
-    //观看广告
-    adShow: function () {
-        let _this = this;
-        util.loding()
-        if (this.videoAd) {
-            this.videoAd.show().then(() => wx.hideLoading()).catch(() => {
-                // 失败重试
-                this.videoAd.load()
-                    .then(() => this.videoAd.show())
-                    .catch(err => {
-                        util.toast('今天观看广告次数已耗尽~')
-                        console.log('激励视频 广告显示失败')
-                    })
-            });
-        }
-    },
-
-    // 加积分
-    addScore: function () {
-        util.loding('正在领取积分')
-        let _this = this;
-        let addScoreUrl = loginApi.domin + '/home/index/video_plus';
-        loginApi.requestUrl(_this, addScoreUrl, "POST", {
-            'uid': wx.getStorageSync('u_id'),
-        }, function (res) {
-            if (res.status == 1) {
-                _this.setData({
-                    userScore: res.integral,
-                    ifshowMask:0,
-                });
-                util.toast('积分领取成功')
-            }
-        })
-    },
-
-    hidejsfenMask:function(){
-        this.setData({
-            ifshowMask:0,
-        })
-    },
-
-    //生成海报
-    generatePoster: function() {
-        util.loding('全速生成中')
-        let _this = this;
-        let generatePosterUrl = loginApi.domin + '/home/index/huatu';
-        loginApi.requestUrl(_this, generatePosterUrl, "POST", {
-            "imgurl": this.picUrl,
-            'id': this.mubanId,
-            'uid':wx.getStorageSync('u_id'),
-        }, function(res) {
-            if (res.status == 1) {
-                _this.setData({
-                    posterUrl: res.path,
-                    qcode: res.qcode,
-                });
-                _this.tongjihaibao(_this.mubanId);
-                setTimeout(function(){
-                    wx.hideLoading();
-                },600)
-            }
-        })
-    },
-
-    // 获取用户会员信息
-    getuserScore: function () {
-        let _this = this;
-        let getuserScoreUrl = loginApi.domin + '/home/index/isvip';
-        loginApi.requestUrl(_this, getuserScoreUrl, "POST", {
-            'uid': wx.getStorageSync('u_id'),
-        }, function (res) {
-            if (res.status == 1) {
-                _this.setData({
-                    ifVip: res.vip,
-                    userScore:res.jifen,
-                });
-            }
-        })
-    },
-
-    //减积分
-    minusscore:function(){
-        let _this = this;
-        let addScoreUrl = loginApi.domin + '/home/index/reducejifen';
-        loginApi.requestUrl(_this, addScoreUrl, "POST", {
-            'uid': wx.getStorageSync('u_id'),
-        }, function (res) {
-            if (res.status == 1) {
-                _this.setData({
-                    userScore: res.integral
-                });
-                _this.uploadImage(2);
-            };
-            if (res.status == 2){
-                util.toast('积分扣除失败/积分不足')
-            }
-        })
-    },
-
-    // 上传图片
-    shangchuan: function() {
-        let _this = this;
-        util.upLoadImage("shangchuan", "image", 1, this, loginApi, function(data) {
-            _this.picUrl = data.imgurl;
-            _this.generatePoster();
-        });
-    },
-
-    judgevip:function(){
-        if (this.data.ifVip){
-            this.uploadImage(1);
-            return;
-        };
-
-        if (this.data.userScore>=50){
-            this.minusscore();
-        }else{
-            this.setData({
-                ifshowMask:1,
-            })
-        }
-
-    },
-
     // 点击保存图片
     uploadImage: function(type) {
         let _this = this;
-        let src = type == 1 ? this.data.posterUrl : this.data.qcode;
+        let src = this.data.posturl;
         wx.getSetting({
             success(res) {
                 // 进行授权检测，未授权则进行弹层授权
@@ -266,22 +100,4 @@ Page({
 
     },
 
-    gotovip:function(){
-        wx.navigateTo({
-            url: `/pages/vipHome/vipHome`,
-        });
-        this.setData({
-            ifshowMask: 0,
-        })
-    },
-
-    //统计海报
-    tongjihaibao: function (id) {
-        let _this = this;
-        let tongjihaibaoUrl = loginApi.domin + '/home/index/increasemuban';
-        loginApi.requestUrl(_this, tongjihaibaoUrl, "POST", {
-            'id':id,
-        }, function (res) {
-        })
-    },
 })

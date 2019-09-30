@@ -3,5 +3,8 @@
     "navigationBarTitleText": "我的",
     "backgroundColor": "#000000",
     "disableSwipeBack": true,
-    "onReachBottomDistance": 0
+    "onReachBottomDistance": 0,
+    "usingComponents": {
+        "top-bar": "/plug/cropper"
+    }
 }

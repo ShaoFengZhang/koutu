@@ -194,7 +194,7 @@ Page({
             "uid":wx.getStorageSync("u_id"),
         }, function (res) {
             if (res.status == 1) {
-                wx.switchTab({
+                wx.navigateTo({
                     url: '/pages/mine/mine'
                 })
             }else{
@@ -203,7 +203,7 @@ Page({
                     content: '请联系客服电话 17130049211 或者加客服微信 bxz201809',
                     showCancel: false,
                     success: function (res) {
-                        wx.switchTab({
+                        wx.reLaunch({
                             url: '/pages/mine/mine'
                         })
                     }

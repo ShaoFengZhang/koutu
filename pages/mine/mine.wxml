@@ -1,5 +1,5 @@
 <view class='bg'>
-
+    <top-bar id="topBarView" style="z-index:9999;"></top-bar>
     <view class="userInfoView" catchtap="gotoVip">
 
         <view class="userIocn">
@@ -69,7 +69,7 @@
 
         <view class="serverItem" catchtap="lianxikefu" data-num='17130049211'>
 
-            <image style="width:48rpx;height:48rpx;margin-right:32rpx;" src="/assets/app/my-select.png" />
+            <image style="width:48rpx;height:48rpx;margin-right:32rpx;" src="/assets/app/kefu.png" />
 
             <view style="width:550rpx">联系客服</view>
 

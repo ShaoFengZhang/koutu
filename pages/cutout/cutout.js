@@ -2,58 +2,61 @@ import loginApi from '../../utils/login.js'
 import util from '../../utils/util.js'
 const app = getApp();
 
-
-let index = 0,
-    items = [],
-    flag = true;
-
 Page({
 
     data: {
+        srcDomin: loginApi.srcDomin,
         ifshowMask: 0,
         itemList: [],
+        contentArr: [],
+        txtNowIndex: 0,
+        picNowSelcet: 0,
+        classArr: [],
+        scrollLeft: 0,
+        apiHave: 0,
+        posLeft: -app.globalData.posLeft,
+        posTop: -app.globalData.posTop,
+        scale:1,
     },
 
     onLoad: function(options) {
-        console.log(options);
+
         let _this = this;
         wx.getSystemInfo({
             success(res) {
-                _this.pix = (res.screenWidth/375);
+                _this.pix = (res.screenWidth / 300);
             }
         });
-        const query = wx.createSelectorQuery()
-        query.select('#caozuo').boundingClientRect()
-        query.selectViewport().scrollOffset()
-        query.exec(function (res) {
-            _this.width = res[0].width;
-            _this.pix = (res[0].width/ 343);
-            _this.height = res[0].height;
-        })
+
+        this.userS = 1;
+        this.userX = 0;
+        this.userY = 0;
+        this.canmove=false;
+
         if (options && options.peopleUrl) {
-            this.mubanId = options.mubanId;
-            this.shareimg = options.shareimg;
+            this.oneTime = true;
             this.setData({
                 peopleUrl: options.peopleUrl,
-                dituimg: options.dituimg,
             });
-            items = this.data.itemList;
-            this.setDropItem({
-                url: options.peopleUrl
-            });
+            util.loding('初始化图片')
+            this.initPic(options.peopleUrl);
+            
         };
-
+        this.page = 1;
+        this.rows = 10;
+        this.cangetData = true;
+        this.getClass(0);
 
     },
 
     onShow: function() {
-        this.getuserScore();  
+        this.getuserScore();
     },
 
     onShareAppMessage: function() {
         return {
             title: '@你，大家一起来制图~',
-            path: `/pages/index/index?mubanId=${this.mubanId}&imgurl=${this.shareimg}&uid=${wx.getStorageSync('u_id')}`,
+            path: `/pages/index/index?uid=${wx.getStorageSync('u_id')}`,
             imageUrl: this.data.posterUrl
         }
     },
@@ -62,6 +65,98 @@ Page({
         util.formSubmit(app, e);
     },
 
+    //获取分类
+    getClass: function(index) {
+        let _this = this;
+        let getClassUrl = loginApi.domin + '/home/index/diandiantype';
+        loginApi.requestUrl(_this, getClassUrl, "POST", {}, function(res) {
+            if (res.status == 1) {
+                _this.setData({
+                    classArr: res.type,
+                });
+                _this.getContent(res.type[index].id)
+            }
+        })
+    },
+
+    // 获取模板数据
+    getContent: function(typeid) {
+        let _this = this;
+        let getContentUrl = loginApi.domin + '/home/index/diandianindex';
+        loginApi.requestUrl(_this, getContentUrl, "POST", {
+            page: this.page,
+            len: this.rows,
+            typeid: typeid,
+        }, function(res) {
+            if (res.status == 1) {
+                if (res.contents.length < _this.rows) {
+                    _this.cangetData = false;
+                }
+
+                if (res.contents.length == 0) {
+                    _this.cangetData = false;
+                    _this.page == 1 ? null : _this.page--;
+                };
+                _this.setData({
+                    contentArr: _this.data.contentArr.concat(res.contents),
+                });
+                _this.setData({
+                    dituimg: _this.data.srcDomin + '/newadmin/Uploads/' + _this.data.contentArr[_this.data.picNowSelcet].url,
+                    apiHave: 1,
+                });
+                _this.mubanId = _this.data.contentArr[_this.data.picNowSelcet].id;
+
+            }
+        })
+    },
+
+    //加载下一页
+    bindscrolltolower: function() {
+        console.log(123113)
+        if (this.cangetData) {
+            this.page++;
+            this.getContent(this.data.classArr[this.data.txtNowIndex].id);
+        }
+    },
+
+    //分类切换
+    txtClassClicl: function(e) {
+        let index = e.currentTarget.dataset.index;
+        if (index == this.data.txtNowIndex) {
+            return;
+        };
+        this.setData({
+            txtNowIndex: index,
+            picNowSelcet: 0,
+            contentArr: [],
+            scrollLeft: 0,
+        });
+        this.cangetData = true;
+        // this.userS = 1;
+        // this.userX = 0;
+        // this.userY = 0;
+        // this.initPic(this.data.peopleUrl);
+        // this.imagebindload();
+        this.getContent(this.data.classArr[index].id)
+    },
+
+    //分类图片点击选择
+    classPicClick: function(e) {
+        let index = e.currentTarget.dataset.index;
+        if (index == this.data.picNowSelcet) {
+            return;
+        };
+        this.setData({
+            picNowSelcet: index,
+            dituimg: this.data.srcDomin + '/newadmin/Uploads/' + this.data.contentArr[index].url,
+        });
+        // this.userS = 1;
+        // this.userX = 0;
+        // this.userY = 0;
+        // this.initPic(this.data.peopleUrl);
+        // this.imagebindload();
+        this.mubanId = this.data.contentArr[index].id;
+    },
 
     hidejsfenMask: function() {
         this.setData({
@@ -80,18 +175,18 @@ Page({
 
         util.loding('全速生成中');
         let _this = this;
-        let generatePosterUrl = loginApi.domin + '/home/index/shengchengrenxiang';
+        let generatePosterUrl = loginApi.domin + '/home/index/shengchengrenxiang1';
         loginApi.requestUrl(_this, generatePosterUrl, "POST", {
             "imgurl": this.data.peopleUrl,
             'id': this.mubanId,
             'uid': wx.getStorageSync('u_id'),
-            'x': this.data.itemList[0].x - (this.data.itemList[0].width * this.data.itemList[0].scale/2),
-            'y': this.data.itemList[0].y - (this.data.itemList[0].height * this.data.itemList[0].scale / 2),
-            'w': this.data.itemList[0].width * this.data.itemList[0].scale,
-            'h': this.data.itemList[0].height * this.data.itemList[0].scale,
-            'pix':this.pix,
-            'width': this.width,
-            'height': this.height,
+            'x': this.userX,
+            'y': this.userY,
+            'w': this.data.picinfo.width * this.userS,
+            'h': this.data.picinfo.height * this.userS,
+            'pix': this.pix,
+            'width': this.userwidth,
+            'height': this.userheight,
         }, function(res) {
             if (res.status == 1) {
                 _this.setData({
@@ -100,7 +195,7 @@ Page({
                 });
                 _this.tongjihaibao(_this.mubanId);
                 setTimeout(function() {
-                    wx.hideLoading();
+                    // wx.hideLoading();
                     _this.judgevip();
                 }, 600)
             }
@@ -108,31 +203,34 @@ Page({
     },
 
     // 抠图上传图片
-    cutOutshangchuan: function () {
+    cutOutshangchuan: function() {
         let _this = this;
-        util.upLoadImage("uploadrenxiang", "image", 1, this, loginApi, function (data) {
+        util.upLoadImage("uploadrenxiang", "image", 1, this, loginApi, function(data) {
             _this.cutoutimg(data.imgurl);
         });
     },
 
     //抠图接口
-    cutoutimg: function (url) {
+    cutoutimg: function(url) {
         util.loding('加载中')
         let _this = this;
         let cutoutimgUrl = loginApi.domin + '/home/index/koutu';
         loginApi.requestUrl(_this, cutoutimgUrl, "POST", {
             'imgurl': url,
-        }, function (res) {
+        }, function(res) {
             if (res.status == 1) {
-                wx.hideLoading();
                 _this.setData({
                     peopleUrl: res.imgurl,
-                    itemList: [],
+                    scale: 1,
                 });
-                items = _this.data.itemList;
-                _this.setDropItem({
-                    url: res.imgurl,
-                });
+                _this.canmove = false;
+                _this.oneTime = true;
+                _this.userS = 1;
+                _this.userX = 0;
+                _this.userY = 0;
+                _this.initPic(res.imgurl)
+                _this.imagebindload();
+                // wx.hideLoading();
             }
         })
     },
@@ -202,6 +300,11 @@ Page({
     uploadImage: function(type) {
         let _this = this;
         let src = type == 1 ? this.data.posterUrl : this.data.qcode;
+        wx.navigateTo({
+            url: `/pages/results/results?url=${src}`,
+        });
+        wx.hideLoading();
+        return;
         wx.getSetting({
             success(res) {
                 // 进行授权检测，未授权则进行弹层授权
@@ -278,16 +381,48 @@ Page({
         }, function(res) {})
     },
 
-    // 初始化图片
-    setDropItem(imgData) {
-        util.loding('读取人像中~')
-        let data = {},
-            _this = this;
+    hidejsfenMask: function() {
+        this.setData({
+            ifshowMask: 0,
+        })
+    },
+
+    // 底图加载完成处理位置信息
+    imagebindload: function() {
+        if (!this.oneTime){
+            return;
+        }
+        this.oneTime=false;
+        let _this = this;
+        const query = wx.createSelectorQuery()
+        query.select('#caozuo').boundingClientRect()
+        query.selectViewport().scrollOffset()
+        query.exec(function(res) {
+            _this.userwidth = res[0].width;
+            _this.pix = (res[0].width / 300);
+            _this.userheight = res[0].height;
+            console.log(res);
+            console.log(-_this.data.posLeft);
+            _this.setData({
+                dx: app.globalData.posLeft + res[0].left,
+                dy: app.globalData.posTop + res[0].top,
+            })
+        });
+        setTimeout(function(){
+            _this.canmove = true;
+            wx.hideLoading();
+        },2400)
+        
+    },
+
+
+    // initPic
+    initPic(url) {
         wx.getImageInfo({
-            src: imgData.url,
+            // src: 'https://duanju.58100.com/upload/huanlian/renxiang/1569229313.png',
+            src: url,
             success: res => {
-                // 初始化数据
-                console.log(res.width)
+                let data = {}
                 if (res.width > 1000) {
                     data.width = res.width * 0.15 //宽度
                     data.height = res.height * 0.15 //高度 
@@ -301,159 +436,38 @@ Page({
                     data.width = res.width * 0.6 //宽度
                     data.height = res.height * 0.6 //高度
                 } else if (res.width < 320) {
-                    data.width = res.width  //宽度
-                    data.height = res.height  //高度 
-                }
-                
-                data.image = imgData.url; //地址
-                data.top = 0; //top定位
-                data.left = 0; //left定位
-                //圆心坐标
-                data.x = data.left + data.width / 2;
-                data.y = data.top + data.height / 2;
-                data.scale = 1; //scale缩放
-                data.oScale = 1; //方向缩放
-                data.rotate = 1; //旋转角度
-                data.active = true; //选中状态
-                console.log(data)
-                items[items.length] = data;
-                _this.setData({
-                    itemList: items
-                });
+                    data.width = res.width //宽度
+                    data.height = res.height //高度 
+                };
+                this.userS = 1;
+                this.userX = 0;
+                this.userY = 0;
+                this.setData({
+                    picinfo: data,
+                    scale: 1,
+                })
             }
         })
     },
 
-    imagebindload:function(){
-        wx.hideLoading();
-    },
-
-    WraptouchStart: function(e) {
-
-        items[index].lx = e.touches[0].clientX;
-        items[index].ly = e.touches[0].clientY;
-
-        console.log(items[index])
-    },
-    WraptouchMove: function(e) {
-        if (flag) {
-            flag = false;
-            setTimeout(() => {
-                flag = true;
-            }, 100)
+    onChange(e) {
+        if (!this.canmove){
+            return;
         }
-        // console.log('WraptouchMove', e)
-        items[index]._lx = e.touches[0].clientX;
-        items[index]._ly = e.touches[0].clientY;
-
-        items[index].left += items[index]._lx - items[index].lx;
-        items[index].top += items[index]._ly - items[index].ly;
-        items[index].x += items[index]._lx - items[index].lx;
-        items[index].y += items[index]._ly - items[index].ly;
-
-        items[index].lx = e.touches[0].clientX;
-        items[index].ly = e.touches[0].clientY;
-        console.log(items)
-        this.setData({
-            itemList: items
-        })
+        this.userX = e.detail.x - this.data.dx;
+        this.userY = e.detail.y - this.data.dy;
+        console.log('move', this.userX, this.userY)
+        console.log('Scale',this.userS)
     },
-    oTouchStart: function(e) {
-        //获取作为移动前角度的坐标
-        items[index].tx = e.touches[0].clientX;
-        items[index].ty = e.touches[0].clientY;
-        //移动前的角度
-        // items[index].anglePre = this.countDeg(items[index].x, items[index].y, items[index].tx, items[index].ty)
-        //获取图片半径
-        items[index].r = this.getDistancs(items[index].x, items[index].y, items[index].left, items[index].top);
-        console.log(items[index])
-    },
-    oTouchMove: function(e) {
-        if (flag) {
-            flag = false;
-            setTimeout(() => {
-                flag = true;
-            }, 100)
+
+    onScale(e) {
+        if (!this.canmove) {
+            return;
         }
-
-        //记录移动后的位置
-        items[index]._tx = e.touches[0].clientX;
-        items[index]._ty = e.touches[0].clientY;
-        //移动的点到圆心的距离
-        items[index].disPtoO = this.getDistancs(items[index].x, items[index].y, items[index]._tx, items[index]._ty - 10)
-
-        if (items[index].width<=80){
-            items[index].scale = (items[index].disPtoO / items[index].r) < 1 ? 1 : items[index].disPtoO / items[index].r;
-        } else if (items[index].width > 80 && items[index].width<=300){
-            items[index].scale = (items[index].disPtoO / items[index].r) < 0.4 ? 0.4 : items[index].disPtoO / items[index].r;
-        }else{
-            items[index].scale = (items[index].disPtoO / items[index].r) < 0.2 ? 0.2 : items[index].disPtoO / items[index].r;
-        }
-
-        
-        // items[index].oScale = 1 / items[index].scale;
-
-        //移动后位置的角度
-        // items[index].angleNext = this.countDeg(items[index].x, items[index].y, items[index]._tx, items[index]._ty)
-        //角度差
-        // items[index].new_rotate = items[index].angleNext - items[index].anglePre;
-
-        //叠加的角度差
-        // items[index].rotate += items[index].new_rotate;
-        // items[index].angle = items[index].rotate; //赋值
-
-        //用过移动后的坐标赋值为移动前坐标
-        items[index].tx = e.touches[0].clientX;
-        items[index].ty = e.touches[0].clientY;
-        // items[index].anglePre = this.countDeg(items[index].x, items[index].y, items[index].tx, items[index].ty)
-
-        //赋值setData渲染
-        this.setData({
-            itemList: items
-        })
-        console.log(items)
-    },
-    WraptouchEnd:function(){
-
-    },
-    getDistancs(cx, cy, pointer_x, pointer_y) {
-        var ox = pointer_x - cx;
-        var oy = pointer_y - cy;
-        return Math.sqrt(
-            ox * ox + oy * oy
-        );
-    },
-    /*
-     *参数1和2为图片圆心坐标
-     *参数3和4为手点击的坐标
-     *返回值为手点击的坐标到圆心的角度
-     */
-    countDeg: function(cx, cy, pointer_x, pointer_y) {
-        var ox = pointer_x - cx;
-        var oy = pointer_y - cy;
-        var to = Math.abs(ox / oy);
-        var angle = Math.atan(to) / (2 * Math.PI) * 360;
-        // console.log("ox.oy:", ox, oy)
-        if (ox < 0 && oy < 0) //相对在左上角，第四象限，js中坐标系是从左上角开始的，这里的象限是正常坐标系  
-        {
-            angle = -angle;
-        } else if (ox <= 0 && oy >= 0) //左下角,3象限  
-        {
-            angle = -(180 - angle)
-        } else if (ox > 0 && oy < 0) //右上角，1象限  
-        {
-            angle = angle;
-        } else if (ox > 0 && oy > 0) //右下角，2象限  
-        {
-            angle = 180 - angle;
-        }
-        return angle;
-    },
-
-    hidejsfenMask: function () {
-        this.setData({
-            ifshowMask: 0,
-        })
-    },
-
+        this.userS = e.detail.scale;
+        this.userX = e.detail.x - this.data.dx;
+        this.userY = e.detail.y - this.data.dy;
+        console.log('move', this.userX, this.userY)
+        console.log('Scale',this.userS)
+    }
 })

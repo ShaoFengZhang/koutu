@@ -1,5 +1,5 @@
 <view class="bg">
-
+    <top-bar id="topBarView" style="z-index:9999;"></top-bar>
     <view class="myscore">
 
         <image src="/assets/app/jifen.png" />

@@ -1,7 +1,8 @@
 {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "抠图",
     "backgroundColor": "#000000",
     "disableSwipeBack": true,
-    "disableScroll":true
+    "disableScroll":true,
+    "usingComponents": {
+        "top-bar": "/plug/cropper"
+    }
 }

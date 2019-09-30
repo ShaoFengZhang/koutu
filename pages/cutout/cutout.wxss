@@ -2,15 +2,16 @@
     min-height: 100vh;
     background-color: #000;
     overflow: hidden;
+    position: relative;
 }
 
 /* 底部按钮 */
 
 .makeBtn {
     width: 100%;
-    height: 144rpx;
+    height: 120rpx;
     background: #252525;
-    line-height: 144rpx;
+    line-height: 120rpx;
     text-align: center;
     color: #fff;
     font-size: 40rpx;
@@ -27,7 +28,7 @@
 
 .changePic, .makingView {
     width: 134rpx;
-    height: 144rpx;
+    height: 120rpx;
 }
 
 .makeBtn image {
@@ -40,7 +41,7 @@
 .wushijifen {
     width: 126rpx;
     height: 44rpx;
-    background: rgba(9, 115, 252, 1);
+    background: linear-gradient(to right, #d16fff, #d143ff, #cb01f3);
     border-radius: 28rpx;
     font-size: 28rpx;
     line-height: 44rpx;
@@ -50,13 +51,15 @@
 /* 移动区域 */
 
 .contentWarp {
-    position:relative;
-    width: 686rpx;
-    height: 922rpx;
-    margin: 40rpx auto 0;
-    background-color: #d1e3f1;
-    background-repeat: no-repeat;
-    background-size: 100%;
+    position: absolute;
+    width: 3000px;
+    height: 3000px;
+    z-index: 0;
+}
+
+.canMoveArea {
+    width: 3000px;
+    height: 3000px;
 }
 
 .touchWrap {
@@ -120,8 +123,7 @@
 }
 
 .touchActive {
-    /* border: 4rpx #fff dashed; */
-    /* z-index: 400; */
+    /* border: 4rpx #fff dashed; *//* z-index: 400; */
 }
 
 /* 积分mask */
@@ -158,7 +160,7 @@
     margin-top: 60rpx;
 }
 
-.shareBtn{
+.shareBtn {
     position: relative;
 }
 
@@ -171,4 +173,77 @@
     width: 520rpx;
     height: 128rpx;
     margin: 64rpx auto 0;
+}
+
+/* 底部分类 */
+
+.classBotView {
+    width: 730rpx;
+    margin: 6rpx 0 0 20rpx;
+    z-index: 9999;
+}
+
+.txtClass {
+    width: 100%;
+    height: 56rpx;
+    text-align: center;
+    line-height: 56rpx;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.classTxtItem {
+    margin-right: 40rpx;
+    color: #9b9b9b;
+    font-size: 32rpx;
+}
+
+.selectTxt {
+    color: #fff;
+    font-size: 40rpx;
+}
+
+.scroll-view {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.classPicList {
+    margin-top: 6rpx;
+}
+
+.classPicItem {
+    margin-right: 16rpx;
+}
+
+.classPicItem image {
+    width: 84rpx;
+    height: 114rpx;
+    vertical-align: top;
+}
+
+.slectPic image {
+    border: 4rpx solid #f80d7f;
+}
+
+/* 重写操作框 */
+
+#caozuo{
+    margin: 10rpx auto 0;
+}
+
+#caozuo, #caozuo image {
+    width: 600rpx;
+    height: 804rpx;
+}
+
+#caozuo image {
+    background: rebeccapurple;
+}
+
+.peopleImg {
+    box-sizing: border-box;
+    border: 2rpx dashed #fff;
 }
